@@ -1,4 +1,4 @@
-# alquiler_vacacional
+# Alquiler vacacional
 
 El proposito de este repositorio es el de realizar un Análisis predictivo sobre el precio del alquiler vacacional en Madrid. Para ello el repositorio constara de diferentes apartados.
 
@@ -12,11 +12,11 @@ Primeramente realizaremos un scrapeo de las webs:
 
 Esto es con el proposito de conseguir datos de diferentes casas y diferentes fechas para proporcionar una prediccion lo más certera.
 
-##**2. EDA de los datos conseguidos**
+## **2. EDA de los datos conseguidos**
 
 En este apartado limpiaremos los datos y los visualizaremos para poder hacer la prediccion lo mejor posible.
 
-##**3. Construccion de los modelos predictivos.**
+## **3. Construccion de los modelos predictivos.**
 
 En este apartado buscaremos los mejores modelos que se adecuen a nuestros datos para conseguir la mejor métrica de score.
 
