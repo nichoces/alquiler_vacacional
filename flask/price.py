@@ -1,10 +1,11 @@
 import datetime
 import holidays
 
-ES_holidays = holidays.ES()
+
 
 # Función para ajustar el precio según las fechas
 def ajustar_precio(prediction, fecha):
+    ES_holidays = holidays.ES()
     # Dividir el rango de fechas en "inicio" y "fin"
     fechas_split = fecha.split('-')
 
