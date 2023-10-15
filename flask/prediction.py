@@ -1,38 +1,40 @@
-from sklearn.preprocessing import LabelEncoder
+import pandas as pd
 import pickle
+from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
-def preprocess(tipo, distrito, habitaciones, baños, capacidad):
-# Crear y ajustar el LabelEncoder directamente en el archivo prediction.py
-    label_encoder = LabelEncoder()
-    room_types = ['Private room', 'Entire home/apt', 'Shared room',] 
-    label_encoder.fit(room_types)
+# Cargar el LabelEncoder previamente entrenado
+with open('flask/LabelEncoder_model.pkl', 'rb') as le_file:
+    label_encoder = pickle.load(le_file)
 
-    # Cargar modelos entrenados desde el archivo pickle
-    with open('modelos_entrenados_xgboost_distritos.pkl', 'rb') as file:
-        modelos_entrenados_xgboost = pickle.load(file)
+room_type_encoder = label_encoder['room_type']
+neighbourhood_encoder = label_encoder['neighbourhood']
 
-        # Utiliza el LabelEncoder para transformar las categorías
-        tipo = label_encoder.transform([tipo])[0]
+# Cargar modelos entrenados
+with open('flask/modelos_entrenados_xgboost_distritos.pkl', 'rb') as file:
+    modelos_entrenados_xgboost_distritos = pickle.load(file)
 
-        # Supongamos que tienes un modelo por distrito, selecciona el modelo correspondiente
-        if distrito in modelos_entrenados_xgboost:
-            modelo = modelos_entrenados_xgboost[distrito]
-        else:
-            # Puedes manejar este caso de error adecuadamente, por ejemplo, con un mensaje de error o un modelo predeterminado
-            return None
+# Función para realizar la predicción
+def predict_price(distrito, predicciones):
+    # Supongamos que distrito es el distrito en el que quieres hacer la predicción
+    if distrito in modelos_entrenados_xgboost_distritos:
+        modelo = modelos_entrenados_xgboost_distritos[distrito]
+    else:
+        # Manejar este caso de error adecuadamente, por ejemplo, con un mensaje de error o un modelo predeterminado
+        return None
 
-        # Realiza cualquier otro preprocesamiento necesario en tus datos
-        solicitud = np.array([tipo, habitaciones, baños, capacidad])
+    # Crear un DataFrame con un índice
+    dataframe_prediccion = pd.DataFrame([predicciones], 
+        columns=["accommodates", "bedrooms", "beds", "Grouped_reviews", "num_bathrooms", "room_type_encoded", "neighbourhood_encoded"])
 
-        # Retorna los datos necesarios para la predicción
-        return solicitud
+    # Modificar directamente los valores en el DataFrame
+    dataframe_prediccion['neighbourhood_encoded'] = neighbourhood_encoder.transform(
+        dataframe_prediccion['neighbourhood_encoded'])
+    dataframe_prediccion['room_type_encoded'] = room_type_encoder.transform(
+        dataframe_prediccion['room_type_encoded'])
 
-def estimation(solicitud, modelo):
-    # Supongamos que solicitud es un conjunto de características preparadas para la predicción
+    # Realizar la predicción
+    precio_prediccion = modelo.predict(dataframe_prediccion)
+    precio_prediccion = round(precio_prediccion[0], 2)
 
-    # Realiza la predicción utilizando el modelo cargado
-    prediction = modelo.predict(solicitud.reshape(1, -1))
-
-    # Devuelve el resultado de la predicción
-    return prediction
+    return precio_prediccion
