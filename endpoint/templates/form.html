@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulario de Predicción de Precio</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+    <h1>Formulario de Predicción de Precio</h1>
+    <form method="POST" action="/form">
+        <label for="distrito">Distrito:</label>
+        <select id="distrito" name="distrito" required>
+            <option value="Vicálvaro">Vicálvaro</option>
+        </select><br><br>
+
+        <label for="neighbourhood_encoded">Barrio:</label>
+        <select id="neighbourhood_encoded" name="neighbourhood_encoded" required>
+            <option value="Valverde">Valverde</option>
+        </select><br><br>
+
+        <label for="room_type_encoded">Alojamiento:</label>
+        <select id="room_type_encoded" name="room_type_encoded" required>
+            <option value="Private room">Private room</option>
+        </select><br><br>
+
+        <label for="accommodates">Número de personas:</label>
+        <input type="number" id="accommodates" name="accommodates" required><br><br>
+
+        <label for="bedrooms">Número de Habitaciones:</label>
+        <input type="number" id="bedrooms" name="bedrooms" required><br><br>
+
+        <label for="num_bathrooms">Número de Baños:</label>
+        <input type="number" id="num_bathrooms" name="num_bathrooms" required><br><br>
+
+        <label for="beds">Número de Camas:</label>
+        <input type="number" id="beds" name="beds" required><br><br>
+
+        <label for="fechas">Fechas (Selecciona un rango):</label>
+        <input type="text" id="fechas" name="fechas" required><br><br>
+
+        <label for="Grouped_reviews">Estrellas (de 1 a 4):</label>
+        <input type="number" id="Grouped_reviews" name="Grouped_reviews" required min="1" max="4"><br><br>
+
+        <input type="submit" value="Realizar Predicción">
+    </form>
+
+    <script>
+        $(function() {
+            $("#fechas").datepicker({
+                dateFormat: "dd/mm/yy",
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                onSelect: function(dateText) {
+                    var startDate = $("#fechas").val();
+                    var endDate = $("#fechas").val();
+                    if (startDate && endDate) {
+                        $("#fechas").val(startDate + " - " + endDate);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
