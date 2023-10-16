@@ -10,7 +10,7 @@ from prediction import predict_price
 from price import ajustar_precio
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173, https://trip-jun-bridge.netlify.app"}})
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def index():

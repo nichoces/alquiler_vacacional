@@ -4,14 +4,14 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 
 # Cargar el LabelEncoder previamente entrenado
-with open('flask/LabelEncoder_model.pkl', 'rb') as le_file:
+with open('LabelEncoder_model.pkl', 'rb') as le_file:
     label_encoder = pickle.load(le_file)
 
 room_type_encoder = label_encoder['room_type']
 neighbourhood_encoder = label_encoder['neighbourhood']
 
 # Cargar modelos entrenados
-with open('flask/modelos_entrenados_xgboost_distritos.pkl', 'rb') as file:
+with open('modelos_entrenados_xgboost_distritos.pkl', 'rb') as file:
     modelos_entrenados_xgboost_distritos = pickle.load(file)
 
 # Función para realizar la predicción
