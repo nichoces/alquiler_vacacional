@@ -1,13 +1,14 @@
 from flask import Flask, request, render_template, jsonify, redirect, url_for
 import sys
 import requests
-import datetime
+
 from flask_cors import CORS
 import json
 
 # Importa la función de predicción desde prediction.py
 from prediction import predict_price
 from price import ajustar_precio
+from prediction import calcular_r2_porcentaje
 
 app = Flask(__name__)
 CORS(app)
@@ -58,12 +59,14 @@ def form():
             precio_minimo_por_dia = prediction_data.get('precio_minimo_por_dia')
             precio_maximo_estancia = prediction_data.get('precio_maximo_estancia')
             precio_minimo_estancia = prediction_data.get('precio_minimo_estancia')
+            r2_porcentaje = prediction_data.get('r2_porcentaje')
 
             return render_template('prediction.html',
                                 precio_maximo_por_dia=precio_maximo_por_dia,
                                 precio_minimo_por_dia=precio_minimo_por_dia,
                                 precio_maximo_estancia=precio_maximo_estancia,
-                                precio_minimo_estancia=precio_minimo_estancia)
+                                precio_minimo_estancia=precio_minimo_estancia,
+                                r2_porcentaje=r2_porcentaje)
 
         return render_template('form.html')
     
@@ -98,6 +101,9 @@ def api_predict():
 
 # Aplica la función ajustar_precio
         precio_ajustado = ajustar_precio(precio_prediccion, fechas)
+        # Agregar el valor R2 en porcentaje a la respuesta JSON
+
+        precio_ajustado['r2_porcentaje'] = calcular_r2_porcentaje(distrito) 
 
 # Devuelve la valoración del modelo en formato JSON
         return jsonify(precio_ajustado)

@@ -2,16 +2,17 @@ import pandas as pd
 import pickle
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
+import json
 
 # Cargar el LabelEncoder previamente entrenado
-with open('LabelEncoder_model.pkl', 'rb') as le_file:
+with open('flask/LabelEncoder_model.pkl', 'rb') as le_file:
     label_encoder = pickle.load(le_file)
 
 room_type_encoder = label_encoder['room_type']
 neighbourhood_encoder = label_encoder['neighbourhood']
 
 # Cargar modelos entrenados
-with open('modelos_entrenados_xgboost_distritos.pkl', 'rb') as file:
+with open('flask/modelos_entrenados_xgboost_distritos.pkl', 'rb') as file:
     modelos_entrenados_xgboost_distritos = pickle.load(file)
 
 # Función para realizar la predicción
@@ -37,4 +38,19 @@ def predict_price(distrito, predicciones):
     precio_prediccion = modelo.predict(dataframe_prediccion)
     precio_prediccion = round(precio_prediccion[0], 2)
 
+
+
+
     return precio_prediccion
+
+def calcular_r2_porcentaje(distrito):
+
+    with open('flask/r2_por_distrito.json', 'r', encoding='utf-8') as file:
+        distrito_r2 = json.load(file)
+
+    r2 = distrito_r2.get(distrito, 0.0)
+
+    r2_porcentaje = r2 * 100
+    r2_porcentaje = round(r2_porcentaje, 2)
+
+    return r2_porcentaje
