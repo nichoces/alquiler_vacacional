@@ -1,6 +1,7 @@
 import datetime
 import holidays
 
+#ajustar el resultado de la predicción según las fechas y el tiempo de estancia, sacar los rangos
 def ajustar_precio(prediction, fechas):
     ES_holidays = holidays.ES()
 

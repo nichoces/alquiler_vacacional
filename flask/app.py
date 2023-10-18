@@ -1,11 +1,10 @@
 from flask import Flask, request, render_template, jsonify, redirect, url_for
 import sys
 import requests
-
 from flask_cors import CORS
 import json
 
-# Importa la función de predicción desde prediction.py
+# Importar las funciones
 from prediction import predict_price
 from price import ajustar_precio
 from prediction import calcular_r2_porcentaje
@@ -31,7 +30,7 @@ def form():
             neighbourhood_encoded = request.form['neighbourhood_encoded']
             grouped_reviews = int(request.form['Grouped_reviews'])
 
-            # Crea un JSON con las características introducidas por el usuario
+            # Crear un JSON con las características introducidas por el usuario
             data = {
                 'distrito': distrito,
                 'room_type_encoded': tipo,
@@ -44,7 +43,7 @@ def form():
                 'Grouped_reviews': grouped_reviews
             }
 
-            # Envía los datos a la ruta /api/predict
+            # Envíar los datos a la ruta /api/predict
             response = requests.post('http://localhost:3500/api/predict', json=data)
 
             if response.status_code == 200:
@@ -81,7 +80,7 @@ def api_predict():
     try:
         data = request.get_json()
 
-        # Extrae las características del JSON recibas
+        # Extraer las características del JSON recibas
         distrito = data.get('distrito')
         tipo = data.get('room_type_encoded')
         capacidad = data.get('accommodates')
@@ -92,20 +91,20 @@ def api_predict():
         neighbourhood_encoded = data.get('neighbourhood_encoded')
         grouped_reviews = data.get('Grouped_reviews')
 
-        # Llama a la función de predicción desde prediction.py
+        # Llamar a la función de predicción desde prediction.py
         predicciones = [capacidad, habitaciones, camas, grouped_reviews, num_bathrooms, tipo, neighbourhood_encoded]
         precio_prediccion = predict_price(distrito, predicciones)
 
         if precio_prediccion is None:
             return jsonify({'error': 'No se pudo realizar la predicción para el distrito especificado'}), 500
 
-# Aplica la función ajustar_precio
+        # Aplicar la función ajustar_precio
         precio_ajustado = ajustar_precio(precio_prediccion, fechas)
-        # Agregar el valor R2 en porcentaje a la respuesta JSON
 
+        # Agregar el valor R2 en porcentaje a la respuesta JSON
         precio_ajustado['r2_porcentaje'] = calcular_r2_porcentaje(distrito) 
 
-# Devuelve la valoración del modelo en formato JSON
+        # Devuelve la valoración del modelo en formato JSON
         return jsonify(precio_ajustado)
 
     except Exception as e:

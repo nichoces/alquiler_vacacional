@@ -1,7 +1,5 @@
 import pandas as pd
 import pickle
-from sklearn.preprocessing import LabelEncoder
-import numpy as np
 import json
 
 # Cargar el LabelEncoder previamente entrenado
@@ -17,11 +15,12 @@ with open('flask/modelos_entrenados_xgboost_distritos.pkl', 'rb') as file:
 
 # Función para realizar la predicción
 def predict_price(distrito, predicciones):
-    # Supongamos que distrito es el distrito en el que quieres hacer la predicción
+    #distrito en el que quieres hacer la predicción
     if distrito in modelos_entrenados_xgboost_distritos:
         modelo = modelos_entrenados_xgboost_distritos[distrito]
     else:
-        # Manejar este caso de error adecuadamente, por ejemplo, con un mensaje de error o un modelo predeterminado
+        print(f"Error: No se encontró el modelo para el distrito {distrito}")
+
         return None
 
     # Crear un DataFrame con un índice
@@ -43,6 +42,7 @@ def predict_price(distrito, predicciones):
 
     return precio_prediccion
 
+# Función para extraer el R2 de un distrito en porcentaje
 def calcular_r2_porcentaje(distrito):
 
     with open('flask/r2_por_distrito.json', 'r', encoding='utf-8') as file:
