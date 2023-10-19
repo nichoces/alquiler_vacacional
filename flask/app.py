@@ -3,6 +3,8 @@ import sys
 import requests
 from flask_cors import CORS
 import json
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 # Importar las funciones
 from prediction import predict_price
@@ -12,11 +14,28 @@ from prediction import calcular_r2_porcentaje
 app = Flask(__name__)
 CORS(app)
 
+# Configura el limitador para permitir 800 consultas por minuto
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["800 per minute"],
+    storage_uri="memory://",
+)
+
+# Ruta personalizada para manejar el mensaje de límite excedido
+@app.errorhandler(429)
+def ratelimit_error(e):
+    return jsonify(error="Ratelimit exceeded. Please try again later."), 429
+@app.route('/', methods=['GET']) 
+def index():
+    return redirect(url_for('form'))
+
 @app.route('/', methods=['GET'])
 def index():
     return redirect(url_for('form'))
 
 @app.route('/form', methods=['GET', 'POST'])
+@limiter.limit("100 per minute")  # Aplica el límite de velocidad a esta ruta
 def form():
     try:
         if request.method == 'POST':
@@ -76,6 +95,7 @@ def form():
 
 
 @app.route('/api/predict', methods=['POST'])
+@limiter.limit("100 per minute")  # Aplica el límite de velocidad a esta ruta
 def api_predict():
     try:
         data = request.get_json()
